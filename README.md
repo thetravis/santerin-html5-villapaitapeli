@@ -5,6 +5,6 @@
 ## Usage
 
 ```
-yarn install
-yarn start / build
+npm install
+npm run dev / build
 ```

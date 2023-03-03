@@ -9,10 +9,10 @@ const retryButtons = Array.from($$('.retry-button')) as HTMLButtonElement[];
 
 const gameStates = {
   intro: () => {
-    playSound('sakarin_villapaitapeli');
+    playSound('santerin_villapaitapeli');
   },
   question: () => {
-    playSound('pue_sakarille_villapaita');
+    playSound('pue_santerille_villapaita');
   },
   selectedNo: async () => {
     await playSound('hmm');
@@ -25,7 +25,7 @@ const gameStates = {
     }, 1500);
   },
   tickling: async () => {
-    await playSound('hihihi_kutittaa');
+    await playSound('naurunremakka_kutittaa');
     changeGameState('gameWon');
   },
   gameLost: () => {
