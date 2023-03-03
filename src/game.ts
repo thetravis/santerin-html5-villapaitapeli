@@ -21,7 +21,6 @@ const gameStates = {
     changeGameState('gameLost');
   },
   selectedYes: () => {
-    wins++;
     stopSound();
     setTimeout(() => {
       changeGameState('tickling');
@@ -29,10 +28,12 @@ const gameStates = {
   },
   tickling: async () => {
     await playSound('naurunremakka_kutittaa');
+    wins++;
+    setCookie(wins, 7);
     changeGameState('gameWon');
   },
   gameLost: () => {
-    playSound('hävisit_pelin');
+    playSound('havisit_pelin');
   },
   gameWon: () => {
     playSound('voitit_pelin');
@@ -51,9 +52,9 @@ function bindEventListeners() {
   };
   retryButtons.forEach(
     btn =>
-      (btn.onclick = () => {
-        changeGameState('intro');
-      })
+    (btn.onclick = () => {
+      changeGameState('intro');
+    })
   );
 }
 
@@ -71,8 +72,37 @@ function changeGameState(name: keyof typeof gameStates) {
 }
 
 function start() {
+
+  if (!document.cookie || isNaN(parseInt(getCookieValue("wins")))) {
+    setCookie(0, 7);
+  }
+
+  wins = parseInt(getCookieValue("wins"));
+
   bindEventListeners();
   changeGameState('intro');
+}
+
+function setCookie(wins: number, exdays: number) {
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  let expires = "expires=" + d.toUTCString();
+  document.cookie = "wins=" + wins + ";" + expires + ";";
+}
+
+function getCookieValue(cname: string) {
+  let name = cname + "=";
+  let ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }
 
 start();
