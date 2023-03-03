@@ -7,6 +7,8 @@ const noBtn = $('.no-button') as HTMLButtonElement;
 const yesBtn = $('.yes-button') as HTMLButtonElement;
 const retryButtons = Array.from($$('.retry-button')) as HTMLButtonElement[];
 
+let wins = 0;
+
 const gameStates = {
   intro: () => {
     playSound('santerin_villapaitapeli');
@@ -19,6 +21,7 @@ const gameStates = {
     changeGameState('gameLost');
   },
   selectedYes: () => {
+    wins++;
     stopSound();
     setTimeout(() => {
       changeGameState('tickling');
@@ -60,6 +63,9 @@ function changeGameState(name: keyof typeof gameStates) {
 
   const stageElement = $(`div[data-stage="${name}"]`) as HTMLDivElement;
   stageElement.style.display = 'block';
+
+  const winsElement = $("#wins") as HTMLSpanElement
+  winsElement.innerHTML = "" + wins;
 
   gameStates[name]();
 }
