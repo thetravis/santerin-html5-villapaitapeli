@@ -5,7 +5,10 @@ const $$ = document.querySelectorAll.bind(document);
 const startBtn = $('.start-button') as HTMLButtonElement;
 const noBtn = $('.no-button') as HTMLButtonElement;
 const yesBtn = $('.yes-button') as HTMLButtonElement;
+const noBtnFinalBoss = $('.no-button-final-boss') as HTMLButtonElement;
+const yesBtnFinalBoss = $('.yes-button-final-boss') as HTMLButtonElement;
 const retryButtons = Array.from($$('.retry-button')) as HTMLButtonElement[];
+const MAX_WINS = 10;
 
 let wins = 0;
 
@@ -16,8 +19,12 @@ const gameStates = {
   question: () => {
     playSound('pue_santerille_villapaita');
   },
+  finalBoss: () => {
+    playSound('pue_jonnalle_villapaita');
+  },
   selectedNo: async () => {
     await playSound('hmm');
+    wins = 0;
     changeGameState('gameLost');
   },
   selectedYes: () => {
@@ -26,6 +33,18 @@ const gameStates = {
       changeGameState('tickling');
     }, 1500);
   },
+  selectedYesFinalBoss: async () => {
+    stopSound();
+    setTimeout(async () => {
+      changeGameState('notGoingToWork');
+    }, 2000);
+  },
+  notGoingToWork: async () => {
+    await playSound('eihan_se_onnistu');
+    wins = 0;
+    changeGameState('gameLost');
+  },
+
   tickling: async () => {
     await playSound('naurunremakka_kutittaa');
     wins++;
@@ -42,10 +61,20 @@ const gameStates = {
 
 function bindEventListeners() {
   startBtn.onclick = () => {
-    changeGameState('question');
+    if (wins >= MAX_WINS) {
+      changeGameState('finalBoss');
+    } else {
+      changeGameState('question');
+    }
   };
   noBtn.onclick = () => {
     changeGameState('selectedNo');
+  };
+  noBtnFinalBoss.onclick = () => {
+    changeGameState('selectedNo');
+  };
+  yesBtnFinalBoss.onclick = () => {
+    changeGameState('selectedYesFinalBoss');
   };
   yesBtn.onclick = () => {
     changeGameState('selectedYes');
@@ -53,7 +82,11 @@ function bindEventListeners() {
   retryButtons.forEach(
     btn =>
     (btn.onclick = () => {
-      changeGameState('intro');
+      if (wins >= MAX_WINS) {
+        changeGameState('finalBoss');
+      } else {
+        changeGameState('intro');
+      }
     })
   );
 }
@@ -69,6 +102,7 @@ function changeGameState(name: keyof typeof gameStates) {
   winsElement.innerHTML = "" + wins;
 
   gameStates[name]();
+
 }
 
 function start() {
@@ -80,6 +114,7 @@ function start() {
   wins = parseInt(getCookieValue("wins"));
 
   bindEventListeners();
+
   changeGameState('intro');
 }
 

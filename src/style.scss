@@ -50,6 +50,20 @@ div[data-stage='question'] {
   }
 }
 
+div[data-stage='finalBoss'] {
+  img {
+    @include offset(46px, 15px);
+  }
+
+  .no-button-final-boss {
+    @include offset(289px, 126px);
+  }
+
+  .yes-button-final-boss {
+    @include offset(290px, 256px);
+  }
+}
+
 div[data-stage='selectedNo'] {
   @include offset(81px, 8px);
 }
@@ -62,6 +76,23 @@ div[data-stage='selectedYes'] {
   .shirt {
     @include offset(-412px, 222px);
     animation: move-to-right 1.5s steps(16, end) infinite;
+  }
+
+  @keyframes move-to-right {
+    to {
+      transform: translate(395px);
+    }
+  }
+}
+
+div[data-stage='selectedYesFinalBoss'] {
+  img {
+    @include offset(94px, 9px);
+  }
+
+  .shirt {
+    @include offset(-412px, 222px);
+    animation: move-to-right 2s steps(16, end) infinite;
   }
 
   @keyframes move-to-right {
