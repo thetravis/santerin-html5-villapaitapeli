@@ -8,7 +8,7 @@ const yesBtn = $('.yes-button') as HTMLButtonElement;
 const noBtnFinalBoss = $('.no-button-final-boss') as HTMLButtonElement;
 const yesBtnFinalBoss = $('.yes-button-final-boss') as HTMLButtonElement;
 const retryButtons = Array.from($$('.retry-button')) as HTMLButtonElement[];
-const MAX_WINS = 10;
+const MAX_WINS = 5;
 
 let wins = 0;
 
@@ -21,6 +21,9 @@ const gameStates = {
   },
   finalBoss: () => {
     playSound('pue_jonnalle_villapaita');
+  },
+  lutakko: () => {
+
   },
   selectedNo: async () => {
     await playSound('hmm');
@@ -41,7 +44,9 @@ const gameStates = {
   },
   notGoingToWork: async () => {
     await playSound('eihan_se_onnistu');
+    await playSound('voi_vitt');
     wins = 0;
+    setCookie(wins, 7);
     changeGameState('gameLost');
   },
 
@@ -51,8 +56,8 @@ const gameStates = {
     setCookie(wins, 7);
     changeGameState('gameWon');
   },
-  gameLost: () => {
-    playSound('havisit_pelin');
+  gameLost: async () => {
+    await playSound('havisit_pelin');
   },
   gameWon: () => {
     playSound('voitit_pelin');
