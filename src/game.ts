@@ -25,6 +25,7 @@ const gameStates = {
   selectedNo: async () => {
     await playSound('hmm');
     wins = 0;
+    setCookie(wins, 7);
     changeGameState('gameLost');
   },
   selectedYes: () => {
@@ -42,6 +43,7 @@ const gameStates = {
   notGoingToWork: async () => {
     await playSound('eihan_se_onnistu');
     wins = 0;
+    setCookie(wins, 7);
     changeGameState('gameLost');
   },
 
