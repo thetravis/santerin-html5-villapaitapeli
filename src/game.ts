@@ -5,6 +5,8 @@ const $$ = document.querySelectorAll.bind(document);
 const startBtn = $('.start-button') as HTMLButtonElement;
 const noBtn = $('.no-button') as HTMLButtonElement;
 const yesBtn = $('.yes-button') as HTMLButtonElement;
+const noBtnLutakko = $('.no-button-lutakko') as HTMLButtonElement;
+const yesBtnLutakko = $('.yes-button-lutakko') as HTMLButtonElement;
 const noBtnFinalBoss = $('.no-button-final-boss') as HTMLButtonElement;
 const yesBtnFinalBoss = $('.yes-button-final-boss') as HTMLButtonElement;
 const retryButtons = Array.from($$('.retry-button')) as HTMLButtonElement[];
@@ -22,6 +24,15 @@ const gameStates = {
   finalBoss: () => {
     playSound('pue_jonnalle_villapaita');
   },
+  lutakko: () => {
+    playSound('pue_talolle_villapaita');
+  },
+  lutakkoJee: async () => {
+    await playSound('jee');
+    wins++;
+    setCookie(wins, 7);
+    changeGameState('gameWon');
+  },
   selectedNo: async () => {
     await playSound('hmm');
     wins = 0;
@@ -34,14 +45,22 @@ const gameStates = {
       changeGameState('tickling');
     }, 1500);
   },
+  selectedYesLutakko: () => {
+    stopSound();
+    setTimeout(() => {
+      changeGameState('lutakkoJee');
+    }, 2000);
+  },
   selectedYesFinalBoss: async () => {
     stopSound();
     setTimeout(async () => {
       changeGameState('notGoingToWork');
     }, 2000);
   },
+
   notGoingToWork: async () => {
     await playSound('eihan_se_onnistu');
+    await playSound('voi_vitt');
     wins = 0;
     setCookie(wins, 7);
     changeGameState('gameLost');
@@ -53,8 +72,8 @@ const gameStates = {
     setCookie(wins, 7);
     changeGameState('gameWon');
   },
-  gameLost: () => {
-    playSound('havisit_pelin');
+  gameLost: async () => {
+    await playSound('havisit_pelin');
   },
   gameWon: () => {
     playSound('voitit_pelin');
@@ -66,11 +85,21 @@ function bindEventListeners() {
     if (wins >= MAX_WINS) {
       changeGameState('finalBoss');
     } else {
-      changeGameState('question');
+      if (wins == MAX_WINS / 2) {
+        changeGameState('lutakko');
+      } else {
+        changeGameState('question');
+      }
     }
   };
   noBtn.onclick = () => {
     changeGameState('selectedNo');
+  };
+  noBtnLutakko.onclick = () => {
+    changeGameState('selectedNo');
+  };
+  yesBtnLutakko.onclick = () => {
+    changeGameState('selectedYesLutakko');
   };
   noBtnFinalBoss.onclick = () => {
     changeGameState('selectedNo');
@@ -84,11 +113,7 @@ function bindEventListeners() {
   retryButtons.forEach(
     btn =>
     (btn.onclick = () => {
-      if (wins >= MAX_WINS) {
-        changeGameState('finalBoss');
-      } else {
-        changeGameState('intro');
-      }
+      changeGameState('intro');
     })
   );
 }
@@ -118,6 +143,7 @@ function start() {
   bindEventListeners();
 
   changeGameState('intro');
+
 }
 
 function setCookie(wins: number, exdays: number) {
